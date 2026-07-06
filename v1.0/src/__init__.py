@@ -1,0 +1,1 @@
+"""Map Generator source package."""
