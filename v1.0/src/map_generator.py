@@ -5,7 +5,7 @@ import pandas as pd
 from geopy.geocoders import ArcGIS, Nominatim
 
 from src import config
-from src.geocoder import find_name_column
+from src.geocoder import find_name_column, row_display_name
 
 
 def get_map_center() -> list[float]:
@@ -35,14 +35,17 @@ def marker_color(category: str) -> str:
     return config.CATEGORY_COLORS.get(str(category), config.DEFAULT_MARKER_COLOR)
 
 
-def build_popup(row: pd.Series, name_column: str) -> folium.Popup:
-    value = row.get(config.VALUE_COLUMN, "")
-    popup_html = f"""
-    <strong>{html.escape(str(row.get(name_column, "")))}</strong><br>
-    区分: {html.escape(str(row.get(config.CATEGORY_COLUMN, "")))}<br>
-    偏差値: {html.escape(str(value))}<br>
-    住所: {html.escape(str(row.get(config.ADDRESS_COLUMN, "")))}
-    """
+def popup_line(label: str, value: object) -> str:
+    if value is None or pd.isna(value) or str(value).strip() == "":
+        return ""
+    return f"{html.escape(label)}: {html.escape(str(value))}<br>"
+
+
+def build_popup(row: pd.Series, name: str) -> folium.Popup:
+    popup_html = f"<strong>{html.escape(name)}</strong><br>"
+    popup_html += popup_line(config.CATEGORY_COLUMN, row.get(config.CATEGORY_COLUMN))
+    popup_html += popup_line(config.VALUE_COLUMN, row.get(config.VALUE_COLUMN))
+    popup_html += popup_line(config.ADDRESS_COLUMN, row.get(config.ADDRESS_COLUMN))
     return folium.Popup(popup_html, max_width=320)
 
 
@@ -64,15 +67,16 @@ def build_map(df: pd.DataFrame) -> folium.Map:
     marker_rows = valid_coordinate_rows(df)
     bounds: list[list[float]] = []
 
-    for _, row in marker_rows.iterrows():
+    for index, row in marker_rows.iterrows():
         latitude = float(row[config.LATITUDE_COLUMN])
         longitude = float(row[config.LONGITUDE_COLUMN])
+        name = row_display_name(row, name_column, int(index))
         bounds.append([latitude, longitude])
 
         folium.Marker(
             location=[latitude, longitude],
-            popup=build_popup(row, name_column),
-            tooltip=str(row.get(name_column, "")),
+            popup=build_popup(row, name),
+            tooltip=name,
             icon=folium.Icon(
                 color=marker_color(row.get(config.CATEGORY_COLUMN, "")),
                 icon="info-sign",

@@ -12,7 +12,23 @@ ERROR_LOG_CSV = OUTPUT_DIR / "error_log.csv"
 
 # Columns can be changed when reusing this project for shops, hospitals,
 # sales targets, or other facilities.
-NAME_COLUMNS = ["学校名", "表示名", "正式名称", "施設名", "名称"]
+NAME_COLUMNS = [
+    "学校名",
+    "ラーメン屋",
+    "店舗名",
+    "店名",
+    "飲食店名",
+    "施設名",
+    "名称",
+    "名前",
+    "表示名",
+    "正式名称",
+    "会社名",
+    "法人名",
+    "顧客名",
+    "取引先名",
+    "拠点名",
+]
 CATEGORY_COLUMN = "区分"
 VALUE_COLUMN = "偏差値"
 ADDRESS_COLUMN = "住所"

@@ -101,10 +101,9 @@ def render_app() -> None:
 
     with st.expander("必要な列"):
         st.write(
-            f"名称列: {', '.join(config.NAME_COLUMNS)} のいずれか / "
-            f"住所列: {config.ADDRESS_COLUMN} / "
-            f"緯度列: {config.LATITUDE_COLUMN} / "
-            f"経度列: {config.LONGITUDE_COLUMN}"
+            f"必須: {config.ADDRESS_COLUMN} / "
+            f"任意: {', '.join(config.NAME_COLUMNS)} のいずれか、"
+            f"{config.LATITUDE_COLUMN}、{config.LONGITUDE_COLUMN}"
         )
 
     if st.button("地図を作成", type="primary", use_container_width=True):

@@ -82,11 +82,39 @@ def geocode_address(
     return None, None, "住所から座標を取得できませんでした"
 
 
-def find_name_column(df: pd.DataFrame) -> str:
+def find_name_column(df: pd.DataFrame) -> Optional[str]:
     for column in config.NAME_COLUMNS:
         if column in df.columns:
             return column
-    raise ValueError(f"施設名の列が見つかりません。候補: {', '.join(config.NAME_COLUMNS)}")
+
+    excluded_columns = {
+        config.ADDRESS_COLUMN,
+        config.LATITUDE_COLUMN,
+        config.LONGITUDE_COLUMN,
+    }
+    name_keywords = ["名", "店", "施設", "場所", "スポット", "拠点"]
+    for column in df.columns:
+        if column in excluded_columns:
+            continue
+        if any(keyword in str(column) for keyword in name_keywords):
+            if df[column].dropna().astype(str).str.strip().any():
+                return column
+
+    for column in df.columns:
+        if column in excluded_columns:
+            continue
+        if df[column].dropna().astype(str).str.strip().any():
+            return column
+
+    return None
+
+
+def row_display_name(row: pd.Series, name_column: Optional[str], fallback_index: int) -> str:
+    if name_column:
+        value = row.get(name_column, "")
+        if pd.notna(value) and str(value).strip():
+            return str(value).strip()
+    return f"地点{fallback_index + 1}"
 
 
 def fill_missing_coordinates(df: pd.DataFrame) -> tuple[pd.DataFrame, list[dict[str, Any]], bool]:
@@ -114,7 +142,7 @@ def fill_missing_coordinates(df: pd.DataFrame) -> tuple[pd.DataFrame, list[dict[
             errors.append(
                 {
                     "行番号": index + 2,
-                    "施設名": row.get(name_column, ""),
+                    "施設名": row_display_name(row, name_column, index),
                     "住所": address,
                     "エラー": error,
                 }
