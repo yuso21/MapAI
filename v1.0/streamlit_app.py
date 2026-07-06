@@ -71,6 +71,11 @@ def render_downloads(df: pd.DataFrame, map_html: str) -> None:
     )
 
 
+def display_dataframe(df: pd.DataFrame) -> pd.DataFrame:
+    hidden_columns = [config.LATITUDE_COLUMN, config.LONGITUDE_COLUMN]
+    return df.drop(columns=hidden_columns, errors="ignore")
+
+
 def render_app() -> None:
     st.title("MapAI")
     st.caption("CSVから住所を読み取り、地図HTMLと座標入りデータを作成します。")
@@ -92,7 +97,7 @@ def render_app() -> None:
         return
 
     st.subheader("データ確認")
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(display_dataframe(df), use_container_width=True, hide_index=True)
 
     with st.expander("必要な列"):
         st.write(

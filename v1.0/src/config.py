@@ -6,7 +6,7 @@ BASE_DIR = Path(__file__).resolve().parents[1]
 DATA_DIR = BASE_DIR / "data"
 OUTPUT_DIR = BASE_DIR / "output"
 
-INPUT_CSV = DATA_DIR / "schools_master_nishikawaguchi.csv"
+INPUT_CSV = DATA_DIR / "omiya_high_school_tennis_mapai_with_tuition.csv"
 MAP_OUTPUT_HTML = OUTPUT_DIR / "school_map.html"
 ERROR_LOG_CSV = OUTPUT_DIR / "error_log.csv"
 
@@ -25,8 +25,8 @@ CATEGORY_COLORS = {
 }
 DEFAULT_MARKER_COLOR = "green"
 
-MAP_CENTER_QUERY = "西川口駅, 埼玉県川口市, 日本"
-DEFAULT_CENTER = [35.8155, 139.7041]
+MAP_CENTER_QUERY = "大宮駅, 埼玉県さいたま市, 日本"
+DEFAULT_CENTER = [35.9063, 139.6239]
 DEFAULT_ZOOM = 12
 
 GEOCODER_USER_AGENT = "map-generator-csv-openstreetmap"
